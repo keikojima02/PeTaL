@@ -13,7 +13,7 @@ services:
 
     #syncs the Docker filesystem with our local computer’s filesystem
     volumes:
-      - .:/petal
+      - .:/django_prototype
 
     # specify the ports to expose within Docker
     ports:
