@@ -1,0 +1,39 @@
+# specify the most recent version32 of Docker Compose
+version: '3.7'
+
+#specify which services to have running within our Docker host
+services:
+
+  web:
+    # Look in the current directory . for the Dockerfile
+    build: .
+
+    # start up the local server
+    command: python manage.py runserver 0.0.0.0:8000
+
+    #syncs the Docker filesystem with our local computer’s filesystem
+    volumes:
+      - .:/petal
+
+    # specify the ports to expose within Docker
+    ports:
+      - 8000:8000
+
+    # make our website depend on the db to run,
+    # consequently db will be started up before web
+    depends_on:
+          - db
+  db:
+    image: postgres:12
+    environment:
+       POSTGRES_PASSWORD: "testing"
+#      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+#    # a dedicated volume for our local database data within the container
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data/
+#
+#
+#    # a dedicated volume for our local database data outside the container
+#  volumes:
+#    postgres_data:
