@@ -13,29 +13,15 @@ class Species(StructuredNode, NodeSerializer):
     # CRITICAL - properties have to be identical to the corresponding properties in neo4j
 
     Order = StringProperty()
-    # organism_order = AliasProperty(to = "Order")
-
     CatalogSource = StringProperty()
-    # catalogue_source = AliasProperty(to = "CatalogSource")
-
     Phylum = StringProperty()
-    # organism_phylum = AliasProperty(to = "Phylum")
-
     Genus = StringProperty()
-    # organism_genus = AliasProperty(to = "Genus")
-
     Family = StringProperty()
-    # organism_family = AliasProperty(to = "Family")
-
     Class = StringProperty()
-    # organism_class = AliasProperty(to = "Class")
-
     Name = StringProperty(required = True)
-    # organism_name = AliasProperty(to = "Name")
+    node_id = StringProperty(index = True)
 
-    # node_id = StringProperty(index = True)
-
-    # Relationships
+    # Relationships (edges
     species = Relationship(".species.Species", None)
     articles = RelationshipTo(".article.Article", "MENTIONS_SPECIES")
 

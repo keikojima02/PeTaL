@@ -5,7 +5,7 @@ import json
 
 def load_dict(path):
     '''
-    Loads a thesaurs and returns the engineer and biologist terms as a dictionary 
+    Loads a thesaurus and returns the engineer and biologist terms as a dictionary
     
     Parameters
     ----------
