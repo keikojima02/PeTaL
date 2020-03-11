@@ -1,48 +1,67 @@
-from neo4j import GraphDatabase, basic_auth
-neoDriver = GraphDatabase.driver("bolt://139.88.179.199:7687", auth=basic_auth("neo4j", "testing"))
-
-from django_prototype._main.models import PetalObject, get_time, get_long_time
+from .._main.models import PetalObject, get_time
 
 from neomodel import (StructuredNode, StringProperty, IntegerProperty,
                     FloatProperty, ArrayProperty, BooleanProperty, StructuredRel,
                     DateTimeProperty, RelationshipTo, Relationship)
 
-class Page(StructuredNode):
-    title = StringProperty()
-    content = StringProperty()
-    links = StringProperty()
-    pagerank = FloatProperty()
-    created_at = DateTimeProperty()
-    last_indexed = DateTimeProperty()
+class Impression(StructuredRel):
+    viewed = DateTimeProperty(default = get_time)
+    view_count = IntegerProperty(default = 0)
+
+class ResultRel(StructuredRel):
+    date_accessed = DateTimeProperty()
 
 
 class KeyWordRel(StructuredRel):
-    relevance = FloatProperty(default=0)
-
-class Index(StructuredNode)
+    relevance = FloatProperty(default = 0)
 
 class KeyWord(StructuredNode):
     keyword = StringProperty()
-    weight = IntegerProperty(default=0)
+    weight = IntegerProperty(default = 0)
+
+    # relationships
+    queries = RelationshipTo('search.models.Query', 'SEARCH_QUERY')
+
+class Result(PetalObject):
+    result_id = StringProperty(unique_index = True)
+    object_type = StringProperty()
+
+    # relationships
+    queries = RelationshipTo('search.models.Query', 'QUERY')
+    clicked_by = RelationshipTo('petalusers.models.PetalUser', 'ACCESSED_BY',
+                                model = ResultRel)
 
 class Query(StructuredNode):
     weight = IntegerProperty(default = 0)
-    search_query = StringProperty(unique_index=True)
-    times_searched = IntegerProperty(default = 1)
+    search_query = StringProperty(unique_index = True)
+    search_count = IntegerProperty(default = 1)
     last_searched = DateTimeProperty(default = get_time)
     trending = BooleanProperty(default = False)
 
     # relationships
-    searched_by = Relationship('users.models.User', 'SEARCHED_BY')
+    searched_by = Relationship('petalusers.models.PetalUser', 'SEARCHED_BY')
     keywords = RelationshipTo(KeyWord, 'KEYWORDS', model = KeyWordRel)
-    results = RelationshipTo(SearchResult, 'RESULT')
+    results = RelationshipTo(Result, 'RESULT')
 
 class Searchable(PetalObject):
     search_id = StringProperty()
-    populated_es_index = BooleanProperty(default=False)
-    view_count = IntegerProperty(default=0)
+    populated_es_index = BooleanProperty(default = False)
+    view_count = IntegerProperty(default = 0)
     summary = StringProperty()
 
     # relationships
-    viewed_by = RelationshipTo('users.models.User', "VIEWED_BY",
+    viewed_by = RelationshipTo('petalusers.models.PetalUser', "VIEWED_BY",
                                model = Impression)
+
+    def get_search_count(self):
+        return self.search_count
+
+    def increment_search_count(self):
+        try:
+            if self.search_count >= 4611686018427387900:
+                return 4611686018427387900
+            self.search_count += 1
+            self.save()
+            return self.search_count
+        except IndexError:
+            return 0
