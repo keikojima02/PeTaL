@@ -19,7 +19,12 @@ from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 
 from neomodel import db, DoesNotExist
+from .models import PetalUser
 from unidecode import unidecode
+import codecs
+
+from .._main.serializers import PetalSerializer
+from .._main.utils import PetalUniqueValidator, generate_job, collect_request_data
 
 
 def generate_username(first_name, last_name):
@@ -44,8 +49,97 @@ def generate_username(first_name, last_name):
             (''.join(e for e in last_name if e.isalnum())).lower(),
             profile_count)
     try:
-        username = unidecode (unicode(username, "utf-8"))
+        username = unidecode(codecs.encode(username, "utf-8"))
     except TypeError:
         # Handles cases where the username is already in unicode format
         username = unidecode(username)
     return username
+
+class PetalUserSerializer(PetalSerializer):
+
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    username = serializers.CharField(read_only = True)
+    password = serializers.CharField(max_length = 128, required = True,
+                                     write_only = True, min_length = 8,
+                                     style = {'input_type': 'password'})
+    email = serializers.EmailField(required = True, write_only = True,
+                                   validators = [PetalUniqueValidator(
+                                       queryset = User.objects.all(),
+                                       message = "That email is already taken.")],)
+    date_of_birth = serializers.DateTimeField(required = True, write_only = True)
+    occupation_name = serializers.CharField(required = False, allow_null = True,
+                                            max_length = 240)
+    employer_name = serializers.CharField(required = False, allow_null = True,
+                                          max_length = 240)
+    is_verified = serializers.BooleanField(read_only = True)
+    email_verified = serializers.BooleanField(read_only = True)
+    profile_pic = serializers.CharField(required = False)
+    actions = serializers.SerializerMethodField()
+    url = serializers.SerializerMethodField()
+    name_summary = serializers.SerializerMethodField()
+
+    def create(self, valid_user_data):
+        request, _, _, _, _ = collect_request_data(self.context)
+        username = generate_username(valid_user_data['first_name'],
+                                     valid_user_data['last_name'])
+        birthdate = valid_user_data.pop('date_of_birth', None)
+
+        user = User.objects.create_user(
+            first_name = valid_user_data['first_name'],
+            last_name = valid_user_data['last_name'],
+            email = valid_user_data['email'].lower().strip(),
+            password = valid_user_data['password'], username = username)
+        user.save()
+        petaluser = PetalUser(email = user.email.lower().strip(),
+                              first_name = user.first_name.title(),
+                              last_name = user.last_name.title(),
+                              username = user.username,
+                              date_of_birth = birthdate,
+                              occupation = valid_user_data.get('occupation', None),
+                              employer = valid_user_data.get('employer', None))
+        petaluser.save()
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

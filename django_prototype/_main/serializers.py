@@ -8,9 +8,9 @@ class PetalSerializer(serializers.Serializer):
     type = serializers.SerializerMethodField()
     created = serializers.DateTimeField(read_only=True)
 
-    def get_id(self, obj):
+    def get_id(self, id_object):
         try:
-            return obj.object_uuid
+            return id_object.object_uuid
         except AttributeError:
             return None
 
@@ -23,4 +23,5 @@ class PetalSerializer(serializers.Serializer):
             "label": instance.get_child_label().lower()
         }
         generate_job(job_func = update_object, job_param = job_param)
+
         return instance

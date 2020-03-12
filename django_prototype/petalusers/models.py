@@ -53,8 +53,8 @@ class PetalUser(Searchable):
     is_admin = BooleanProperty(default = False)
     is_verified = BooleanProperty(default = True)
     search_index = StringProperty()
-    employer_name = StringProperty()
-    occupation_name = StringProperty()
+    employer = StringProperty()
+    occupation = StringProperty()
     # base_index_id is the plebs id in the base search index
     base_index_id = StringProperty()
     email_verified = BooleanProperty(default=False)
