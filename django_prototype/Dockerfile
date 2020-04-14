@@ -6,15 +6,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
-WORKDIR /django_prototype
+WORKDIR /alpha
 
 # Install dependencies
-COPY Pipfile Pipfile.lock /django_prototype/
+COPY Pipfile Pipfile.lock /alpha/
 RUN pip install pipenv && pipenv install --system
-#
-# mark a file as 'executable' since this is a linux container on a windows host
-#RUN ["chmod", "+x", "executable.sh"]
-#chmod +rwx manage.py
 
 # Copy project
-COPY . /django_prototype/
+COPY . /alpha/
