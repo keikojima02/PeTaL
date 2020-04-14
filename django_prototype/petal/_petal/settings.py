@@ -157,7 +157,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CELERY_DISABLE_RATE_LIMITS = True
-CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 CELERY_ALWAYS_EAGER = False
 
 REMOVE_CLASSES = ["Searchable", "AbstractNode"]

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from api.utils import generate_job
-from bird.tasks import update_query_object
+from django_prototype.petal.api.utils import generate_job
+from django_prototype.petal.bird.tasks import update_query_object
 
 class NodeSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField()

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from neomodel import db
-from bird.tasks import update_query_object
+from django_prototype.petal.bird.tasks import update_query_object
 
 
 class Command(BaseCommand):

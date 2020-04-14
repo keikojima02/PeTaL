@@ -6,9 +6,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import ValidationError
 
 from elasticsearch import Elasticsearch
-from api import errors
-from api.utils import generate_job
-from bird.tasks import update_query
+from django_prototype.petal.api import errors
+from django_prototype.petal.api.utils import generate_job
+from django_prototype.petal.bird.tasks import update_query
 
 
 class SearchViewSet(ListAPIView):

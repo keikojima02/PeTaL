@@ -1,6 +1,5 @@
 from django.core.cache import cache
-from django.utils.text import slugify
-from api.models import AbstractNode, get_time
+from django_prototype.petal.api.models import AbstractNode, get_time
 from neo4j import CypherError
 
 from neomodel import (StructuredNode, StringProperty, IntegerProperty,

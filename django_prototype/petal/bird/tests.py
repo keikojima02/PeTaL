@@ -8,7 +8,7 @@ from django.test.client import RequestFactory
 
 from elasticsearch import Elasticsearch
 
-from bird.tasks import (update_query, update_query_object)
+from django_prototype.petal.bird.tasks import (update_query, update_query_object)
 
 import pytz
 from datetime import datetime
